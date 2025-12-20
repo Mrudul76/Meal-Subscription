@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Page</title>
+  <style>
+    body { font-family: Arial, sans-serif; background-color: #fdf6e4; margin:0; padding:0; }
+    .container { max-width: 500px; margin: 50px auto; background: #fff; padding:30px; border-radius:10px; box-shadow: 0px 4px 10px rgba(0,0,0,0.1); }
+    h2 { text-align: center; color: #e58c2d; }
+    label { display:block; margin-top:15px; font-weight:bold; }
+    input[type="text"], input[type="email"], select { width:100%; padding:10px; margin-top:5px; border:1px solid #ccc; border-radius:5px; }
+    .payment-options { margin-top:20px; }
+    .payment-options label { font-weight: normal; margin-right: 15px; }
+    button { width:100%; padding:12px; margin-top:20px; background: orange; color:white; font-size:16px; border:none; border-radius:5px; cursor:pointer; }
+    button:hover { background:#cc761f; }
+    .back-btn { position:absolute; top:20px; left:20px; background-color:#e58c2d; color:white; border:none; padding:8px 14px; border-radius:5px; cursor:pointer; text-decoration:none; font-size:14px; }
+    .back-btn:hover { background-color:#cc7722; }
+    #online-method { display:none; margin-top:10px; }
+  </style>
+</head>
+<body>
+
+<a href="{{ back_url }}" class="back-btn"> ←</a>
+
+<div class="container">
+  <h2>Payment Page</h2>
+
+  <!-- Display Selected Plan Info -->
+   <p><strong>Name:</strong> {{ current_user.name }}</p>
+<p><strong>Address:</strong> {{ user_address }}</p>
+<p><strong>Plan:</strong> {{ plan_type }}</p>
+<p><strong>Start Date:</strong> {{ meal_date }}</p>
+<p><strong>End Date:</strong> {{ end_date }}</p>
+
+<p><strong>Meal Time:</strong> 
+  {% if meal_type == 'lunch' %}
+    Lunch Only
+{% elif meal_type == 'dinner' %}
+    Dinner Only
+{% elif meal_type == 'both' %}
+    Lunch & Dinner
+{% endif %}</p>
+<p><strong>Food Type:</strong> 
+{% if food_type == 'veg' %}
+    Veg Meal
+{% elif food_type == 'nonveg' %}
+    Non-Veg meal (served on Sunday)
+
+{% endif %}</p>
+<p><strong>Total Cost:</strong> ₹{{ total_cost }}</p>
+
+  <!-- Payment Options -->
+  <div class="payment-options">
+    <p><strong>Select Payment Method:</strong></p>
+    <label><input type="radio" name="payment" value="online"> Online Payment</label>
+    <label><input type="radio" name="payment" value="cod"> Cash on Delivery (COD)</label>
+  </div>
+
+  <!-- Online Payment Sub-options -->
+  <select id="online-method">
+    <option value="">Select Online Method</option>
+    <option value="phonepe">PhonePe</option>
+    <option value="gpay">GPay</option>
+    <option value="paypal">PayPal</option>
+  </select>
+
+  <button type="button" onclick="processPayment()">Pay Now</button>
+</div>
+
+<script>
+  const userName = "{{ current_user.name }}";
+const userAddress = "{{ current_user.address if current_user.address else '' }}";
+
+const paymentRadios = document.querySelectorAll('input[name="payment"]');
+const onlineSelect = document.getElementById('online-method');
+
+// Show/hide online payment methods
+paymentRadios.forEach(radio => {
+  radio.addEventListener('change', function() {
+    onlineSelect.style.display = (this.value === 'online') ? 'block' : 'none';
+  });
+});
+
+function processPayment() {
+  const paymentMethod = document.querySelector('input[name="payment"]:checked');
+  if(!paymentMethod) { alert("Please select a payment method!"); return; }
+
+  const method = paymentMethod.value;
+  const onlineMethod = document.getElementById('online-method').value;
+
+  if(method === 'online' && !onlineMethod) {
+    alert("Please select an online payment method!");
+    return;
+  }
+
+  // Dummy success alert
+  if(method === 'online') {
+    alert(`Thank you! Your payment via ${onlineMethod.toUpperCase()} was successful.\nEnjoy your meal!`);
+  } else {
+    alert("Thank you! Your order has been placed with Cash on Delivery.\nEnjoy your meal!");
+  }
+
+  // Save subscription via backend (dummy)
+  fetch('/save_subscription', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+    plan_type: "{{ plan_type }}",
+    meal_date: "{{ meal_date }}",
+    meal_type: "{{ meal_type }}",
+    food_type: "{{ food_type }}",
+    total_cost: "{{ total_cost }}"  // <-- just use it
+})
+
+  })
+  .then(res => res.json())
+  .then(data => {
+    if(data.success){
+      window.location.href = '/dashboard'; // redirect after saving
+    } else {
+      alert("Error saving subscription: " + data.message);
+    }
+  })
+  .catch(err => console.error(err));
+}
+
+// Calculate total cost based on meal type and food type
+function calculateCost(mealType, foodType){
+  let price = (foodType.toLowerCase() === 'veg') ? 50 : 70;
+  let count = (mealType.toLowerCase() === 'both') ? 2 : 1;
+  return price * count;
+}
+</script>
+
+</body>
+</html>

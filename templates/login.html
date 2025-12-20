@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Login - Tiffin Service</title>
+
+  <!-- Internal CSS -->
+  <style>
+    /* Reset default margins/padding and set font */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    /* Center content vertically & horizontally */
+    body {
+      background-color: #f5f5f5; 
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;  /* full height */
+      position: relative; /* can position back button inside */
+      background:linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+url("{{ url_for('static', filename='images/bg3.jpg') }}") no-repeat right center;
+    background-size: cover;  }
+
+    /* Back button (top-left corner) */
+    .back-btn {
+      position: absolute; /* place it relative to body */
+      top: 20px; /* distance from top */
+      left: 20px; /* distance from left */
+      background-color: #e58c2d; 
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 5px;
+      cursor: pointer;
+      text-decoration: none; /* remove underline */
+      font-size: 14px;
+    }
+
+    /* Back button hover effect */
+    .back-btn:hover {
+      background-color: #cc7722; /* darker orange */
+    }
+
+    /* Login form container box */
+    .login-container {
+      background-color: #fff; /* white box */
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* soft shadow */
+      width: 350px; /* fixed width */
+        /* position: relative; */
+
+    }
+
+    /* Heading style */
+    .login-container h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #333;
+    }
+
+    /* Labels above inputs */
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: #555;
+    }
+
+    /* Input fields styling */
+    input[type="email"],
+    input[type="password"] {
+      width: 100%; /* full width */
+      padding: 10px;
+      margin-bottom: 20px; /* space between fields */
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    /* Login button styling */
+    .login-btn {
+      width: 100%;
+      padding: 10px;
+      background-color: #e58c2d; 
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    /* Hover effect for login button */
+    .login-btn:hover {
+      background-color: #cc7722; 
+    }
+
+    /* Links below the login button */
+    .extra-links {
+      text-align: center;
+      margin-top: 15px;
+    }
+
+    /* Style for register/forgot links */
+    .extra-links a {
+      color: #e58c2d; 
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    /* Hover underline for links */
+    .extra-links a:hover {
+      text-decoration: underline;
+    }
+
+    .admin-link {
+  position: absolute;
+  bottom: 10px;   /* distance from bottom */
+  left: 10px;     /* distance from left */
+  font-size: 14px;
+  color: #e58c2d;
+  text-decoration: none;
+}
+
+.admin-link:hover {
+  text-decoration: underline;
+}
+    .form-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  max-width: 900px;
+  margin: 50px auto;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  overflow: hidden;
+}
+
+.form-image {
+  flex: 1;
+}
+.form-image img {
+  width: 400px;        /* fixed width */
+  height: 100%;        /* or a fixed height like 500px */
+  object-fit: cover;   /* ensures aspect ratio looks good */
+}
+  </style>
+</head>
+<body>
+
+  <!-- Back Button -->
+  <a href="{{ url_for('homef') }}" class="back-btn"> ← </a>
+
+  <div class="form-wrapper">
+
+  <!-- Left side: Image -->
+  <div class="form-image">
+    <img src="{{ url_for('static', filename='images/image6.jpg') }}" alt="Login">
+  </div>
+
+  <!-- Login Form Container -->
+  <div class="login-container">
+    <h2>User Login</h2>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <script>
+        alert("{{ message }}");
+      </script>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+    
+    <!-- Login form -->
+    <form action="{{ url_for('login') }}" method="post">
+      
+      <!-- Email Input -->
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" required>
+
+      <!-- Password Input -->
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" required>
+
+      <!-- Submit/Login Button -->
+      <button type="submit" class="login-btn">Login</button>
+
+      <!-- Links for Register & Forgot Password -->
+      <div class="extra-links">
+        <p><a href="{{ url_for('register') }}">Don't have an account? Register</a></p>
+        <p><a href="{{ url_for('forgot_password') }}">Forgot Password?</a></p>
+                <p><a href="{{ url_for('admin_login') }}"><strong>Admin Login</strong></a></p>
+
+      </div>
+
+    </form>
+    <!-- <a href="admin-login.html" class="admin-link">Admin Login</a> -->
+
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Meal Plans</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      padding: 20px;
+    }
+
+    h2 {
+      text-align: center;
+      color:orange;
+      margin-bottom: 20px;
+    }
+
+    .plans-table {
+      width: 100%;
+      max-width: 1000px;
+      margin: 0 auto;
+      border-collapse: collapse;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .plans-table th, .plans-table td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      text-align: center;
+    }
+
+    .plans-table th {
+      background: teal;
+      color: white;
+    }
+
+    .plans-table td {
+      background: #fafafa;
+    }
+
+    button {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 2px;
+    }
+
+    .edit-btn {
+      background: #3498db;
+      color: white;
+    }
+
+    .save-btn {
+      background: #2ecc71;
+      color: white;
+      display: none;
+    }
+
+    .editable {
+      background: #fffbe7 !important;
+    }
+    /* ----back button---- */
+        .back-btn {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background-color: #e58c2d;
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 5px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    .back-btn:hover { background-color: #cc7722; }
+  </style>
+</head>
+<body>
+  <a href="{{ url_for('admin_dashboard') }}" class="back-btn"> ← </a>
+
+  <h2>Manage Meal Plans</h2>
+
+  <table class="plans-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Plan Type</th>
+        <th>Days</th>
+        <th>Veg Price</th>
+        <th>Non-Veg Price</th>
+        <th>Description</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+<tbody>
+{% for plan in plans %}
+<tr data-id="{{ plan[0] }}">
+  <td>{{ plan[0] }}</td>  <!-- ID -->
+  <td>{{ plan[1] }}</td>  <!-- Plan Type -->
+  <td>{{ plan[2] }}</td>  <!-- Days -->
+  <td>{{ plan[3] }}</td>  <!-- Veg Price -->
+  <td>{{ plan[4] }}</td>  <!-- Non-Veg Price -->
+  <td>{{ plan[5] }}</td>  <!-- Description -->
+  <td>
+    <button class="edit-btn">Edit</button>
+    <button class="save-btn">Save</button>
+  </td>
+</tr>
+{% endfor %}
+</tbody>
+
+
+  </table>
+
+  <script>
+    // Handle Edit Button
+    document.querySelectorAll(".edit-btn").forEach(btn => {
+      btn.addEventListener("click", function () {
+        let row = this.closest("tr");
+
+        // Make cells editable except ID and Action
+        for (let i = 1; i < row.cells.length - 1; i++) {
+          row.cells[i].setAttribute("contenteditable", "true");
+          row.cells[i].classList.add("editable");
+        }
+
+        this.style.display = "none"; // hide Edit button
+        row.querySelector(".save-btn").style.display = "inline-block"; // show Save button
+      });
+    });
+
+    // Handle Save Button
+    document.querySelectorAll(".save-btn").forEach(btn => {
+      btn.addEventListener("click", function () {
+        let row = this.closest("tr");
+        let planId = row.getAttribute("data-id");
+
+        let updatedData = {
+          id: planId,
+          type: row.cells[1].innerText.trim(),
+          days: row.cells[2].innerText.trim(),
+          veg_price: row.cells[3].innerText.trim(),
+          nonveg_price: row.cells[4].innerText.trim(),
+          description: row.cells[5].innerText.trim()
+        };
+
+        // Disable editing again
+        for (let i = 1; i < row.cells.length - 1; i++) {
+          row.cells[i].removeAttribute("contenteditable");
+          row.cells[i].classList.remove("editable");
+        }
+
+        this.style.display = "none"; // hide Save
+        row.querySelector(".edit-btn").style.display = "inline-block"; // show Edit
+
+        // Send data to backend
+        fetch("/update-plan", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(updatedData)
+        })
+        .then(res => res.json())
+        .then(data => {
+          alert(" Plan updated successfully!");
+        })
+        .catch(err => console.error(" Error:", err));
+      });
+    });
+  </script>
+</body>
+</html>

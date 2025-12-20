@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meal Plans</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #fdf6e4;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h2 {
+      text-align: center;
+      color: #e67e22;
+      margin-bottom: 20px;
+    }
+
+    .plans-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .plan-card {
+      background: #fff;
+      border: 2px solid #ffb84d;
+      border-radius: 12px;
+      padding: 20px;
+      width: 260px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transition: transform 0.3s;
+    }
+
+    .plan-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .plan-card h3 {
+      color: #d35400;
+      margin: 0 0 10px;
+    }
+
+    .plan-card .days {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 8px;
+    }
+
+    .plan-card .price {
+      font-size: 15px;
+      font-weight: bold;
+      margin: 6px 0;
+      color: teal;
+    }
+
+    .plan-card p {
+      font-size: 14px;
+      color: #444;
+      margin-bottom: 12px;
+    }
+
+    .btn-plan {
+      display: inline-block;
+      background: #e67e22;
+      color: white;
+      padding: 8px 14px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+
+    .btn-plan:hover {
+      background: #cf711f;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Our Meal Plans</h2>
+  <div class="plans-container" id="plansContainer">
+    <!-- Cards will load here dynamically -->
+  </div>
+
+  <script>
+    // Example data (normally this comes from backend via API/DB)
+    const mealPlans = [
+      { id: 1, type: "Trial", days: 1, veg: 100, nonveg: 120, desc: "1 Day Trial Meal" },
+      { id: 2, type: "Weekly", days: 7, veg: 600, nonveg: 750, desc: "Perfect for a busy week" },
+      { id: 3, type: "Monthly", days: 30, veg: 2400, nonveg: 2800, desc: "Your everyday meal partner" },
+      { id: 4, type: "Quarterly", days: 90, veg: 7000, nonveg: 8500, desc: "Best value for long term" }
+    ];
+
+    const container = document.getElementById("plansContainer");
+
+    mealPlans.forEach(plan => {
+      const card = document.createElement("div");
+      card.classList.add("plan-card");
+      card.innerHTML = `
+        <h3>${plan.type} Plan</h3>
+        <div class="days">${plan.days} Days</div>
+        <div class="price">Veg: ₹${plan.veg} | Non-Veg: ₹${plan.nonveg}</div>
+        <p>${plan.desc}</p>
+        <a href="plan-details.html?id=${plan.id}" class="btn-plan">View Plan</a>
+      `;
+      container.appendChild(card);
+    });
+  </script>
+
+</body>
+</html>

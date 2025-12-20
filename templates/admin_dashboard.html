@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+
+  <title>Tiffin Service Landing Page</title>
+
+  <!-- Internal CSS -->
+  <style>
+    /* Reset default browser margins and paddings */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* Body styling */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #111;   /* dark background */
+      color: #fff;             /* white text */
+    }
+
+    /* Navigation bar container */
+    nav {
+      display: flex;
+  justify-content: space-between;   /* space between logo, links, and buttons */
+  align-items: center;
+  padding: 15px 50px;
+  background-color:#111;           /* black background */
+  position: fixed;                  /* stays on top */
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+    }
+
+    /* Logo styling */
+    .logo {
+      font-size: 22px;
+      font-weight: bold;
+      color: #fff;
+    }
+
+    /* Navbar menu links */
+    .nav-links {
+      display: flex;
+      gap: 25px;
+        list-style: none;  /* remove bullets */
+
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: #ffffff;
+      font-size: 16px;
+      transition: color 0.3s;
+    }
+
+    /* Active/Home link */
+    .nav-links a.active {
+      color: orange;
+        font-weight: bold;
+
+    }
+
+    .nav-links a:hover {
+      color: orange;
+    }
+
+    /* Right side buttons */
+    .nav-buttons {
+      display: flex;
+      gap: 15px;
+    }
+
+    .btn {
+      padding: 10px 18px;
+      border-radius: 25px;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+
+/*--------------------------- Dropdown menu styling */
+.dropdown {
+  position: relative; /* so dropdown-menu can position absolute relative to it */
+}
+
+.dropdown-menu {
+  display: none;       /* hide by default */
+  position: absolute;
+  top: 100%;           /* below parent */
+  left: 0;
+  background: #111;    /* same as navbar background */
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  min-width: 180px;    /* width of dropdown */
+  border-radius: 6px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  z-index: 100;
+}
+
+.dropdown-menu li a {
+  display: block;
+  padding: 10px 15px;
+  color: #fff;
+  text-decoration: none;
+  font-size: 15px;
+  transition: background 0.3s, color 0.3s;
+}
+
+.dropdown-menu li a:hover {
+  background: orange;
+  color: #111;
+  border-radius: 5px;
+}
+
+/* Show dropdown on hover */
+.dropdown:hover .dropdown-menu {
+  display: block;
+}
+
+
+    /* Login button */
+    .btn-login {
+      background-color: orange;
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 25px;
+  text-decoration: none;   /* removes underline */
+  display: inline-block;   /* behaves like button */
+  font-weight: bold;
+  transition: 0.3s;
+    }
+
+    /* Order button */
+    .btn-order {
+      background-color: orange;
+      color: #fff;
+    }
+
+    /* Hero section with background image and text */
+    .hero {
+          margin-top: 80px;  /* adjust to navbar height */
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 120px 50px 50px 50px;
+      min-height: 100vh;
+      background: 
+    linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+url("{{ url_for('static', filename='images/food-background3.jpg') }}") no-repeat right center;
+    background-size: cover;      /* background: url('food-background3.jpg') no-repeat right center/cover;
+      opacity: 0.7; */
+    }
+
+    /* Hero text container */
+    .hero-text {
+      max-width: 50%;
+    }
+
+    .hero-text h1 {
+      font-size: 48px;
+      margin-bottom: 20px;
+      line-height: 1.3;
+    }
+
+    /* Highlighted orange text */
+    .hero-text span {
+      color: orange;
+    }
+
+    .hero-text p {
+      font-size: 16px;
+      color: #f8f8f8;
+      margin-bottom: 25px;
+    }
+
+    /* Hero CTA button */
+    .btn-hero {
+      background: linear-gradient(to right, #ff6a00, #ff9100);
+      color: white;
+      font-size: 16px;
+      padding: 12px 25px;
+      border-radius: 30px;
+      border: none;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .btn-hero:hover {
+      opacity: 0.9;
+    }
+
+    /* ----------------------Menu Section Background */
+.menu-section {
+  background: #ffdba8;
+  padding: 50px 20px;
+  text-align: center;
+}
+
+/* Container */
+.menu-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Heading */
+.menu-container h2 {
+  font-size: 28px;
+  margin-bottom: 30px;
+  color: #333;
+}
+
+/* Meal Box */
+.meal-box {
+  background: #ffffff;
+  padding: 20px;
+  margin: 15px 0;
+  border-radius: 10px;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+
+  display: flex;              /* enable flex layout */
+  align-items: center;        /* vertically align items */
+  gap: 20px;                  /* spacing between image and text */
+}
+
+
+.meal-box h3 {
+  color: #e58c2d;
+  margin-bottom: 10px;
+  
+}
+.meal-box img {
+    /* display: block;
+    margin: 10px auto;
+    max-width: 200px;     
+    max-height: 150px; 
+    object-fit: cover;  
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2); */
+
+     flex-shrink: 0;             /* prevent image from shrinking */
+  width: 150px;               /* fixed width */
+  height: 120px;              /* fixed height */
+  object-fit: cover;          /* maintain aspect ratio */
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+/* Text container (meal name/desc) */
+.meal-details {
+  flex: 1;                    /* take remaining space */
+}
+/* Meal description text */
+.meal-details p {
+    font-size: 20px;
+    color: #0c0c0c;
+}
+
+/* Buttons */
+.menu-actions {
+  margin-top: 30px;
+}
+
+.menu-actions .btn {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 5px;
+  margin: 10px;
+  cursor: pointer;
+  font-size: 16px;
+  color: #fff;
+  transition: background-color 0.3s ease;
+  
+}
+.menu-actions a {
+  text-decoration: none;   /* no underline */
+  display: inline-block;   /* makes it behave like a button */
+}
+
+
+.extra-btn {
+  background-color: #28a745; /* green */
+}
+
+.extra-btn:hover {
+  background-color: #218838;
+}
+
+.skip-btn {
+  background-color: #dc3545; /* red */
+}
+
+.skip-btn:hover {
+  background-color: #b52a37;
+}
+
+
+    /* About Us Section */
+.about {
+  background-color: #ffffff;   /* dark background */
+  padding: 80px 50px;         /* top-bottom and sides */
+  color: #fff;
+}
+
+.about-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 50px;
+  max-width: 1200px;
+  margin: auto;  /* center the content */
+}
+
+/* Image on left */
+.about-img img {
+  width: 500px;
+  border-radius: 20px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+}
+
+/* Text on right */
+.about-text {
+  flex: 1;
+}
+
+.about-text h2 {
+  font-size: 36px;
+  margin-bottom: 20px;
+  color: orange;   /* highlight heading */
+}
+
+.about-text p {
+  font-size: 16px;
+  line-height: 1.6;
+  margin-bottom: 15px;
+  color: #040404;
+}
+
+/* Button */
+.btn-about {
+  background: linear-gradient(to right, #ff6a00, #ff9100);
+  color: #fff;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 30px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.btn-about:hover {
+  opacity: 0.85;
+}
+
+/* Pricing Section */
+.pricing {
+  background:  #ffdba8; /* orange gradient */
+  color: #111;        /* dark text for better contrast */
+  text-align: center;
+  padding: 50px 50px;
+}
+
+.section-title {
+  font-size: 36px;
+  margin-bottom: 10px;
+  color: orange;   /* white heading to pop on orange background */
+}
+
+.section-subtitle {
+  font-size: 20px;
+  color: black;  /* light cream shade for subtitle */
+  margin-bottom: 50px;
+}
+
+.pricing-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 30px;
+  max-width: 1200px;
+  margin: auto;
+  justify-content: center;
+
+}
+
+.plan-card {
+  background: #fff;  /* white cards on orange background */
+  padding: 30px 20px;
+  border-radius: 20px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  transition: transform 0.3s;
+}
+
+.plan-card:hover {
+  transform: translateY(-10px);
+}
+
+.plan-title {
+  font-size: 24px;
+  margin-bottom: 15px;
+  color: rgb(230, 152, 5);
+}
+.plan-days {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+.plan-price {
+  font-size: 15px;
+  color:teal;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+.plan-desc {
+  font-size: 0.95rem;
+  color: black;
+  margin-bottom: 15px;
+}
+
+/* Button */
+.btn-plan {
+  display: inline-block;
+  padding: 12px 25px;
+  background: linear-gradient(to right, #ff6a00, #ff9100);
+  color: #fff;
+  border-radius: 30px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.btn-plan:hover {
+  opacity: 0.85;
+}
+
+/* ================= convenience STYLING ================= */
+
+.extra-options {
+  text-align: center;
+  padding: 50px 20px;
+  background: #ffff;
+  /* background-image: url('food-background3.jpg'); */
+
+}
+
+.extra-options h2 {
+  font-size: 28px;
+  margin-bottom: 30px;
+  color: orange;
+}
+
+.options-container {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+.option-card {
+  background: #ffdba8;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  padding: 20px;
+  max-width: 300px;
+  text-align: center;
+  transition: transform 0.2s;
+}
+
+.option-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.option-card h3 {
+  font-size: 20px;
+  margin-bottom: 10px;
+  color:teal;
+}
+
+.option-card p {
+  font-size: 16px;
+  color: #242424;
+}
+
+.option-card:hover {
+  transform: translateY(-5px);
+}
+
+/* ================= FOOTER STYLING ================= */
+.footer {
+  background-color: #000;      /* Black background for footer */
+  color: #fff;                 /* White text */
+  padding: 40px 20px;          /* Space inside footer */
+}
+
+/* Use flexbox to arrange the 3 columns side by side */
+.footer-container {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;             /* Makes columns stack on small screens */
+  max-width: 1200px;
+  margin: 0 auto;              /* Center content */
+}
+
+/* ===== Left Column: About Section ===== */
+.footer-about {
+  flex: 1;                     /* Takes equal width in flex */
+  min-width: 250px;
+}
+.footer-logo {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+.footer-about p {
+  margin-bottom: 15px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* Social Icons Row */
+.footer-social a {
+  color: orange;               /* Orange icons */
+  margin-right: 15px;
+  font-size: 18px;
+  transition: 0.3s;
+}
+.footer-social a:hover {
+  color: #fff;                 /* White on hover */
+}
+
+/* ===== Middle Column: Quick Links ===== */
+.footer-links {
+  flex: 1;
+  min-width: 200px;
+}
+.footer-links h3 {
+  color: orange;
+  margin-bottom: 15px;
+}
+.footer-links ul {
+  list-style: none;
+}
+.footer-links ul li {
+  margin-bottom: 10px;
+}
+.footer-links ul li a {
+  color: #fff;
+  text-decoration: none;
+  font-size: 14px;
+}
+.footer-links ul li a:hover {
+  color: orange;               /* Hover effect for links */
+}
+
+/* ===== Right Column: Contact Info ===== */
+.footer-contact {
+  flex: 1;
+  min-width: 250px;
+}
+.footer-contact h3 {
+  color: orange;
+  margin-bottom: 15px;
+}
+.footer-contact ul {
+  list-style: none;
+}
+.footer-contact ul li {
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+.footer-contact ul li i {
+  color: orange;               /* Orange icons for contact */
+  margin-right: 10px;
+}
+.footer-contact a {
+  color: inherit;             /* inherit color from parent (keeps your footer theme) */
+  text-decoration: none;      /* remove underline */
+  transition: color 0.3s ease;
+}
+
+.footer-contact a:hover {
+  color: #e58c2d;             /* highlight on hover */
+  text-decoration: underline; /* optional underline effect */
+}
+.meal-box hr {
+  border: 0;
+  border-top: 1px solid #ddd;
+  margin: 8px 0;
+}
+
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <!-- Navbar -->
+<nav>
+  <div class="logo"><img src="{{ url_for('static', filename='images/logo.png') }}" 
+         alt="Logo" 
+         style="height:80px; vertical-align:middle;">
+      <span style="margin-left:10px; font-weight:bold; color:#fff;">Hi, Admin</span>
+    </div>
+  
+  <ul class="nav-links">
+    <li><a href="#" class="active">Home</a></li>
+    <li><a href="#about">About Us</a></li>
+    <li><a href="#pricing">Plans</a></li>
+        <li><a href="#contact">Contact Us</a></li>
+
+    <!-- <li><a href="#">Customers</a></li> -->
+    <!-- Customers Dropdown -->
+  <li class="dropdown">
+    <a href="#">Customers ▼</a>
+    <ul class="dropdown-menu">
+      <li><a href="{{ url_for('registered_users') }}">Registered Users</a></li>
+      <li><a href="{{ url_for('subscribed_customers') }}">Subscribed Customers</a></li>
+      <!-- <li><a href="payment_table.html">Payment Table</a></li> -->
+      <li><a href="{{ url_for('admin_skipped_meals') }}">Skipped meal</a></li>
+      <li><a href="{{ url_for('admin_extra_orders') }}">Extra meal</a></li>
+
+    </ul>
+  </li>
+    <!-- <li><a href="#">Policies</a></li> -->
+  </ul>
+
+  <div class="nav-buttons">
+    <!-- <button class="btn btn-login" >Login & Register</button> -->
+    <a href="{{ url_for('homef') }}" onclick="return confirmLogout()" class="btn btn-login">Logout</a>
+
+    <!-- <button class="btn btn-order">Order Now</button> -->
+  </div>
+</nav>
+
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-text">
+      <h1>
+        Freshly Cooked.<br>
+        <span>Lovingly Packed.</span><br>
+        Delivered Daily.
+      </h1>
+      <p>
+        Experience the authentic taste of home-cooked meals delivered right to your 
+        doorstep. Healthy, delicious, and made with love.
+      </p>
+      <!-- <button class="btn-hero">Check out our Plans</button> -->
+    </div>
+  </section>
+
+
+  <!---------------------Update Today's Menu Section -->
+<!--------------------- Today's Menu Section --------------------->
+<section class="menu-section">
+  <div class="menu-container">
+    <h2>Today's Menu</h2>
+
+    <!-- LUNCH -->
+<div class="meal-box">
+  {% if lunch_meal %}
+    <div class="meal-details">
+      <h3>Lunch</h3>
+
+      <!-- Veg Section -->
+      <div style="display:flex; align-items:center; margin-bottom:10px;">
+        <img src="{{ url_for('static', filename='images/meals/' + lunch_meal.meal_image) }}"
+             alt="{{ lunch_meal.meal_name }}"
+             style="width:120px; height:100px; border-radius:10px; margin-right:15px;">
+        <p><strong>Veg:</strong> {{ lunch_meal.meal_name }}</p>
+      </div>
+
+      <!-- Non-Veg Section (only if Sunday and available) -->
+      {% if now.strftime('%A') == 'Sunday' and lunch_meal.lunch_nonveg_name %}
+      <div style="display:flex; align-items:center;">
+        <img src="{{ url_for('static', filename='images/meals/' + lunch_meal.lunch_nonveg_image) }}"
+             alt="{{ lunch_meal.lunch_nonveg_name }}"
+             style="width:120px; height:100px; border-radius:10px; margin-right:15px;">
+        <p><strong>Non-Veg:</strong> {{ lunch_meal.lunch_nonveg_name }}</p>
+      </div>
+      {% endif %}
+    </div>
+  {% else %}
+    <img src="{{ url_for('static', filename='images/default.jpg') }}" alt="No lunch">
+    <div class="meal-details">
+      <h3>Lunch</h3>
+      <p>Not updated yet</p>
+    </div>
+  {% endif %}
+</div>
+
+
+<!-- DINNER -->
+<div class="meal-box">
+  {% if dinner_meal %}
+    <div class="meal-details">
+      <h3>Dinner</h3>
+
+      <!-- Veg Section -->
+      <div style="display:flex; align-items:center; margin-bottom:10px;">
+        <img src="{{ url_for('static', filename='images/meals/' + dinner_meal.meal_image) }}"
+             alt="{{ dinner_meal.meal_name }}"
+             style="width:120px; height:100px; border-radius:10px; margin-right:15px;">
+        <p><strong>Veg:</strong> {{ dinner_meal.meal_name }}</p>
+      </div>
+
+      <!-- Non-Veg Section (only if Sunday and available) -->
+      {% if now.strftime('%A') == 'Sunday' and dinner_meal.dinner_nonveg_name %}
+      <div style="display:flex; align-items:center;">
+        <img src="{{ url_for('static', filename='images/meals/' + dinner_meal.dinner_nonveg_image) }}"
+             alt="{{ dinner_meal.dinner_nonveg_name }}"
+             style="width:120px; height:100px; border-radius:10px; margin-right:15px;">
+        <p><strong>Non-Veg:</strong> {{ dinner_meal.dinner_nonveg_name }}</p>
+      </div>
+      {% endif %}
+    </div>
+  {% else %}
+    <img src="{{ url_for('static', filename='images/default.jpg') }}" alt="No dinner">
+    <div class="meal-details">
+      <h3>Dinner</h3>
+      <p>Not updated yet</p>
+    </div>
+  {% endif %}
+</div>
+
+
+<!-- </section> -->
+
+    <!-- Action Buttons -->
+<div class="menu-actions">
+  <a href="{{ url_for('meal_update') }}" class="btn extra-btn">Update Meal Items</a>
+</div>
+
+  </div>
+</section>
+
+  <!-------------------- About Us Section -->
+<section class="about" id="about">
+  <div class="about-container">
+    
+    <!-- Left side: image -->
+    <div class="about-img">
+      <img src="{{ url_for('static', filename='images/image3.jpg') }}" alt="Delicious food">
+    </div>
+
+    <!-- Right side: text -->
+    <div class="about-text">
+      <h2>About Us</h2>
+      <p>
+     We believe that food is more than just a meal – it’s comfort, care, and connection. Our tiffin service was started with a simple mission: to bring homemade, healthy, and delicious meals to people who are away from home, busy at work, or simply looking for fresh, wholesome food every day.
+      </p>
+      <p>
+        We are passionate about bringing <strong>home-cooked meals</strong> to your doorstep.  
+        Our mission is to make sure you enjoy food that is not only <em>healthy and tasty</em> but also 
+        reminds you of the warmth of homemade cooking.  
+      </p>
+      <p>
+        With a team of dedicated chefs, we lovingly prepare and pack each meal 
+        so that you get freshness delivered daily.
+      </p>
+
+      <!-- <button class="btn-about">Learn More</button> -->
+    </div>
+  </div>
+</section>
+
+<!-- Pricing Section -->
+<section class="pricing" id="pricing">
+  <h2 class="section-title">Our Plans</h2>
+  <p class="section-subtitle">Choose a plan that suits your appetite</p>
+
+  <div class="pricing-container">
+{% for plan in plans %}
+    <div class="plan-card">
+      <h3 class="plan-title">{{ plan[1] }}</h3> <!-- plan_type -->
+      <p class="plan-days">{{ plan[2] }} Days</p> <!-- days -->
+      <p class="plan-price">Veg: ₹{{ plan[3] }} | Non-Veg: ₹{{ plan[4] }}</p>
+      <p class="plan-desc">{{ plan[5] }}</p> <!-- description -->
+      <!-- {% if plan[1] == 'Trial' %}
+        <a href="{{ url_for('trial') }}" class="btn-plan">View Plan</a>
+      {% elif plan[1] == 'Weekly' %}
+        <a href="{{ url_for('weekly') }}" class="btn-plan">View Plan</a>
+      {% elif plan[1] == 'Monthly' %}
+        <a href="{{ url_for('monthly') }}" class="btn-plan">View Plan</a>
+      {% elif plan[1] == 'Quarterly' %}
+        <a href="{{ url_for('quarterly') }}" class="btn-plan">View Plan</a>
+      {% endif %} -->
+          <a class="btn-plan disabled-btn" onclick="return false;">View Plan</a>
+
+    </div>
+  {% endfor %}
+</div>
+
+    <div class="menu-actions">
+  <a href="{{ url_for('update_plan_page') }}" class="btn extra-btn">Update Plan Details</a>
+  <!-- <a href="skip.html" class="btn skip-btn">Skip Meal</a> -->
+</div>
+  </div>
+</section>
+
+<!-- ------------Extra Options Section ------------>
+<section class="extra-options">
+  <h2>Convenience Features</h2>
+  <div class="options-container">
+
+     <!-- Customize plan -->
+    <div class="option-card">
+      <img src="{{url_for('static',filename='images/image7.jpeg')}}" alt="Customize Tiffin">
+      <h3>Customize Plan</h3>
+      <p>Choose between Lunch, Dinner, or Both as per your preference. Need to select start date.</p>
+    </div>
+    
+    <!-- Order Extra Tiffin -->
+    <div class="option-card">
+      <img src="{{url_for('static',filename='images/image5.jpg')}}" alt="Extra Tiffin">
+      <h3>Order Extra Meal</h3>
+      <p>Need more food for your guests or family? Easily order extra tiffins along with your regular plan.</p>
+    </div>
+
+    <!-- Skip Tiffin -->
+    <div class="option-card">
+      <img src="{{url_for('static',filename='images/skip.jpg')}}" alt="Skip Tiffin">
+      <h3>Skip Meal</h3>
+      <p>Not hungry or have other plans? Skip your tiffin for the day with just one click.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ================= CONTACT / FOOTER SECTION ================= -->
+<footer class="footer" id="contact">
+  <div class="footer-container">
+    
+    <!-- ==== Left Column: Logo + Small About Text + Social Icons ==== -->
+<div class="footer-about">
+      <img src="{{ url_for('static', filename='images/logo.png') }}" 
+         alt="Logo" 
+         style="height:100px; vertical-align:middle;">
+      <h2 class="footer-logo">MyMeal</h2>
+      <p>
+      <!-- Social Media Icons -->
+      <div class="footer-social">
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-facebook"></i></a>
+        <a href="#"><i class="fab fa-whatsapp"></i></a>
+      </div>
+    </div>
+
+    <!-- ==== Middle Column: Quick Navigation Links ==== -->
+    <div class="footer-links">
+      <h3>Quick Links</h3>
+      <ul>
+        <li><a href="#home">Home</a></li>
+        <li><a href="#about">About Us</a></li>
+        <!-- <li><a href="#services">Services</a></li> -->
+        <li><a href="#pricing">Pricing</a></li>
+        <!-- <li><a href="#contact">Contact Us</a></li> -->
+        <!-- <li><a href="#policies">Policies</a></li> -->
+      </ul>
+    </div>
+
+    <!-- ==== Right Column: Contact Info ==== -->
+    <div class="footer-contact">
+      <h3>Get In Touch</h3>
+      <ul>
+        <!-- Location -->
+        <li><i class="fas fa-map-marker-alt"></i> <a href="https://www.google.com/maps?q=Mayur+Colony,+Kothrud,+Pune,+Maharashtra" target="_blank">
+        Mayur Colony, Kothrud, Pune, Maharashtra
+      </a></li>
+        <!-- Phone -->
+        <li><i class="fas fa-phone"></i> <a href="tel:+919988776655">+91 9988776655</a>
+    </li>
+
+        <!-- Email -->
+        <li><i class="fas fa-envelope"></i><a href="mailto:mymeal@gmail.com">mymeal@gmail.com</a>
+    </li>
+
+        <!-- Working Hours -->
+        <!-- <li><i class="fas fa-clock"></i> Mon-Sat: 9:00 AM - 7:00 PM</li> -->
+      </ul>
+    </div>
+
+  </div>
+</footer>
+
+
+</body>
+</html>
+<script>function confirmLogout() {
+    return confirm("Are you sure you want to log out?");
+}
+</script> 

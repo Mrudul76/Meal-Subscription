@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User - Skipped Meals</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      margin: 0;
+      padding: 20px;
+       background:linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+url("{{ url_for('static', filename='images/bg3.jpg') }}") no-repeat right center;
+    background-size: cover; 
+    }
+
+    h2 {
+      text-align: center;
+      color: orange;
+      margin-top: 40px;
+      margin-bottom: 20px;
+    }
+
+    .table-container {
+      max-width: 1000px;
+      margin: 20px auto;
+      background: #fff;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead {
+      background: teal;
+      color: white;
+    }
+
+    th, td {
+      padding: 6px 10px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+
+    tbody tr:nth-child(even) {
+      background: #f9f9f9;
+    }
+
+    td[contenteditable="true"] {
+      background: #ffff;
+      cursor: text;
+    }
+
+    @media screen and (max-width: 768px) {
+      th, td {
+        padding: 8px;
+      }
+    }
+
+    /* ----back button---- */
+    .back-btn {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background-color: #e58c2d;
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 5px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    .back-btn:hover { background-color: #cc7722; }
+  </style>
+</head>
+<body>
+  <a href="{{ url_for('user_dashboard') }}" class="back-btn"> ← </a>
+
+  <h2>Your Skipped Meals</h2>
+  <div class="table-container">
+    <table id="skipTable">
+      <thead>
+        <tr>
+          <th>Skip ID</th>
+          <th>Subscription ID</th>
+          <th>Skip Date</th>
+          <th>Meal Time</th>
+          <th>Refund Amount</th>
+          <th>Refund Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for meal in skipped_meals %}
+        <tr>
+          <td>{{ meal.skip_id }}</td>
+          <td>{{ meal.subscription_id }}</td>
+          <td>{{ meal.skip_date }}</td>
+          <td>{{ meal.meal_time }}</td>
+          <td>₹{{ meal.refund_amount }}</td>
+          <td>
+            {% if meal.refund_status == 'Pending' %}
+              Pending
+            {% else %}
+              Refunded
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>

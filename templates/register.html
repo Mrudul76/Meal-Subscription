@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Register - Tiffin Service</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      /* background-color: #f0f0f0; */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      /* background-image: url(image2.webp); */
+      background:linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+url("{{ url_for('static', filename='images/bg2.jpg') }}") no-repeat right center;
+background-size: cover;       }
+
+    .back-btn {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background-color: #e58c2d;
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 5px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    .back-btn:hover { background-color: #cc7722; }
+
+    .register-container {
+      background-color: #fff;
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      width: 400px;
+    }
+
+    .register-container h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #333;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: bold;
+      color: #444;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="tel"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 18px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .password-container {
+      position: relative;
+    }
+    /* .toggle-password {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      font-size: 16px;
+    } */
+
+    .register-btn {
+      width: 100%;
+      padding: 10px;
+      background-color: #e58c2d;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .register-btn:hover { background-color: #cc7722; }
+
+    .login-link {
+      text-align: center;
+      margin-top: 15px;
+    }
+    .login-link a {
+      color: #e58c2d;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    .login-link a:hover { text-decoration: underline; }
+
+    .error {
+      color: red;
+      font-size: 13px;
+      margin-top: -15px;
+      margin-bottom: 10px;
+    }
+
+    /* Password Rules Styling */
+    #password-rules {
+      margin-top: -10px;
+      margin-bottom: 10px;
+      padding-left: 20px;
+      font-size: 13px;
+      display: none; /* hidden until focus */
+    }
+    #password-rules li.invalid { color: red; }
+    #password-rules li.valid { color: green; }
+
+    #confirmPasswordError {
+  color: red;
+  font-size: 13px;
+  margin-top: -15px;
+  margin-bottom: 10px;
+}
+
+
+  </style>
+</head>
+<body>
+  <a href="{{ url_for('login') }}" class="back-btn"> ← </a>
+
+  <div class="register-container">
+    <h2>Create Account</h2>
+
+    <form id="registerForm" method="POST" action="{{ url_for('register') }}">
+      <label for="name">Full Name</label>
+      <input type="text" id="name" name="name" required>
+
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" required>
+
+      <label for="phone">Phone</label>
+      <input type="tel" id="phone" name="phone" maxlength="10" required pattern="[0-9]+"   oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+      <div class="error" id="phoneError"></div>
+
+      <label for="address">Address</label>
+      <input type="text" id="address" name="address" required>
+
+      <label for="password">Password</label>
+      <div class="password-container">
+        <input type="password" id="password" name="password" required>
+      </div>
+
+      <ul id="password-rules">
+        <li id="eightcharacters" class="invalid">Contain 8 characters</li>
+        <li id="lowercase" class="invalid">Contain lowercase characters</li>
+        <li id="uppercase" class="invalid">Contain uppercase characters</li>
+        <li id="numbers" class="invalid">Contain numbers</li>
+        <li id="special" class="invalid">Contain special characters</li>
+      </ul>
+<label for="confirm_password">Confirm Password</label>
+<input type="password" id="confirm_password" name="confirm_password" required>
+<div class="error" id="confirmPasswordError"></div>
+
+      <button type="submit" class="register-btn">Register</button>
+
+      <div class="login-link">
+        <p>Already have an account? <a href="{{ url_for('login') }}">Login here</a></p>
+      </div>
+
+      <div id="successMessage" style="color: green; font-size: 14px; text-align: center; margin-top: 10px; display: none;">
+  Successfully Registered!
+</div>
+    </form>
+  </div>
+
+  <script>
+    const password = document.getElementById("password");
+    const rules = document.getElementById("password-rules");
+    const eightcharacters = document.getElementById("eightcharacters");
+    const lowercase = document.getElementById("lowercase");
+    const uppercase = document.getElementById("uppercase");
+    const numbers = document.getElementById("numbers");
+    const special = document.getElementById("special");
+
+    // Show rules only when focused
+    password.addEventListener("focus", () => {
+      rules.style.display = "block";
+    });
+
+    // Hide rules if valid
+    password.addEventListener("keyup", () => {
+      let val = password.value;
+      let valid = true;
+
+      // Rules validation
+      if (val.length >= 8) { eightcharacters.classList.add("valid"); eightcharacters.classList.remove("invalid"); }
+      else { eightcharacters.classList.add("invalid"); eightcharacters.classList.remove("valid"); valid = false; }
+
+      if (/[a-z]/.test(val)) { lowercase.classList.add("valid"); lowercase.classList.remove("invalid"); }
+      else { lowercase.classList.add("invalid"); lowercase.classList.remove("valid"); valid = false; }
+
+      if (/[A-Z]/.test(val)) { uppercase.classList.add("valid"); uppercase.classList.remove("invalid"); }
+      else { uppercase.classList.add("invalid"); uppercase.classList.remove("valid"); valid = false; }
+
+      if (/\d/.test(val)) { numbers.classList.add("valid"); numbers.classList.remove("invalid"); }
+      else { numbers.classList.add("invalid"); numbers.classList.remove("valid"); valid = false; }
+
+      if (/[\W_]/.test(val)) { special.classList.add("valid"); special.classList.remove("invalid"); }
+      else { special.classList.add("invalid"); special.classList.remove("valid"); valid = false; }
+
+      // If all valid → hide rules
+      if (valid) { rules.style.display = "none"; }
+      else { rules.style.display = "block"; }
+    });
+
+    // Toggle password visibility
+    // function togglePassword() {
+    //   if (password.type === "password") {
+    //     password.type = "text";
+    //   } else {
+    //     password.type = "password";
+    //   }
+    // }
+
+    // Phone validation
+//   document.getElementById("registerForm").addEventListener("submit", function(event) {
+//       let phone = document.getElementById("phone").value;
+//       let phoneError = document.getElementById("phoneError");
+//       let successMessage = document.getElementById("successMessage");
+
+//       phoneError.innerText = "";
+//       successMessage.style.display = "none"; // hide success message on re-check
+ 
+//       // Check if phone contains only digits and is 10 digits long
+//       if (!/^\d{10}$/.test(phone)) {
+//         phoneError.innerText = "Phone number must be 10 digits only.";
+//         isValid = false;
+//   }
+
+//   // If everything is valid, show success message
+//   if (isValid) {
+//     successMessage.style.display = "block";
+//   }
+
+//   return false; // Prevent actual form submission for demo
+// });
+
+document.getElementById("registerForm").addEventListener("submit", function(event) {
+    let phone = document.getElementById("phone").value;
+    let phoneError = document.getElementById("phoneError");
+    let password = document.getElementById("password").value;
+
+let confirmPassword = document.getElementById("confirm_password").value;
+let confirmPasswordError = document.getElementById("confirmPasswordError");
+confirmPasswordError.innerText = "";
+
+
+let isValid = true;
+    phoneError.innerText = "";
+    
+    successMessage.style.display = "none";
+
+    // Validate phone
+    if (!/^\d{10}$/.test(phone)) {
+        phoneError.innerText = "Phone number must be 10 digits only.";
+        isValid = false;
+    }
+
+    // Validate password rules (example: at least 8 chars)
+    if (password.length < 8) {
+        alert("Password must be at least 8 characters long.");
+        isValid = false;
+    }
+// Validate confirm password
+if (password !== confirmPassword) {
+    confirmPasswordError.innerText = "Passwords do not match.";
+    isValid = false;
+}
+
+
+    // If validation fails → prevent submission
+    if (!isValid) {
+        event.preventDefault();
+    }
+    // If valid → form will submit to Flask normally
+});
+</script>
+
+  
+</body>
+</html>

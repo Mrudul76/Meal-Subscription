@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - Payments</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h2 {
+      text-align: center;
+      color: #e67e22;
+      margin-top: 40px;
+      margin-bottom: 20px;
+    }
+
+    .table-container {
+      max-width: 1000px;
+      margin: 20px auto;
+      background: #fff;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead {
+      background: teal;
+      color: white;
+    }
+
+    th, td {
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+
+    tbody tr {
+      background: #f9f9f9;
+    }
+
+    td[contenteditable="true"] {
+      background: inherit; /* same as row */
+      cursor: text;
+    }
+
+    button.save-btn {
+      padding: 6px 12px;
+      background: #e58c2d;
+      border: none;
+      border-radius: 6px;
+      color: white;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button.save-btn:hover {
+      background: #cc7722;
+    }
+
+    @media screen and (max-width: 768px) {
+      th, td {
+        padding: 6px 8px;
+      }
+    }
+
+    /* ----back button---- */
+        .back-btn {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background-color: #e58c2d;
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 5px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    .back-btn:hover { background-color: #cc7722; }
+  </style>
+</head>
+<body>
+  <a href="admin_dashboard.html" class="back-btn"> ← </a>
+
+  <h2>Payments</h2>
+  <div class="table-container">
+    <table id="paymentTable">
+      <thead>
+        <tr>
+          <th>Payment ID</th>
+          <th>User ID</th>
+          <th>Subscription ID</th>
+          <th>Amount</th>
+          <th>Payment Date</th>
+          <th>Status</th>
+          <!-- <th>Actions</th> -->
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Dynamic rows inserted via JS -->
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    // ---------- Example Payment Data ----------
+    const payments = [
+      { payment_id: 1, user_id: 101, subscription_id: 201, amount: 50, payment_date: "2025-09-19", status: "Paid" },
+    //   { payment_id: 2, user_id: 102, subscription_id: 202, amount: 350, payment_date: "2025-09-18", status: "Pending" },
+    //   { payment_id: 3, user_id: 103, subscription_id: 203, amount: 1400, payment_date: "2025-09-17", status: "Failed" }
+    ];
+
+    const tbody = document.querySelector("#paymentTable tbody");
+
+    payments.forEach(payment => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${payment.payment_id}</td>
+        <td>${payment.user_id}</td>
+        <td>${payment.subscription_id}</td>
+        <td contenteditable="true">${payment.amount}</td>
+        <td contenteditable="true">${payment.payment_date}</td>
+        <td contenteditable="true">${payment.status}</td>
+        <td><!-- <button class="save-btn" onclick="savePayment(${payment.payment_id}, this)">Save</button> --></td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    // Optional: function to save payment edits to backend
+    function savePayment(paymentId, btn) {
+      const row = btn.closest("tr");
+      const updatedPayment = {
+        amount: row.children[3].innerText,
+        payment_date: row.children[4].innerText,
+        status: row.children[5].innerText
+      };
+      console.log("Updated Payment:", paymentId, updatedPayment);
+      alert("Payment updated (simulate backend).");
+    }
+  </script>
+
+</body>
+</html>

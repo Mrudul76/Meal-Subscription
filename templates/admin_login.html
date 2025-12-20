@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin Login - Tiffin Service</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background-color: #f5f5f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+       background:linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+url("{{ url_for('static', filename='images/bg3.jpg') }}") no-repeat right center;
+    background-size: cover; 
+    }
+
+    .login-container {
+      background-color: #fff;
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      width: 350px;
+      position: relative;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #333;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: #555;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 10px;
+      background-color: #e58c2d;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .login-btn:hover {
+      background-color: #cc7722;
+    }
+
+    .extra-links {
+      text-align: center;
+      margin-top: 15px;
+    }
+
+    .extra-links a {
+      color: #e58c2d;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .extra-links a:hover {
+      text-decoration: underline;
+    }
+
+    /* Back to user login link */
+    .back-link {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      font-size: 14px;
+      color: #e58c2d;
+      text-decoration: none;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+
+     .form-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  max-width: 900px;
+  margin: 50px auto;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  overflow: hidden;
+    /* flex-direction: row-reverse;  moves image to right */
+
+}
+
+.form-image {
+  flex: 1;
+}
+.form-image img {
+  width: 400px;        /* fixed width */
+  height: 100%;        /* or a fixed height like 500px */
+  object-fit: cover;   /* ensures aspect ratio looks good */
+}
+  </style>
+</head>
+<body>
+<div class="form-wrapper">
+
+  <!-- Left side: Image -->
+  <!-- <div class="form-image">
+    <img src="image9.jpg" alt="Login">
+  </div> -->
+  <div class="login-container">
+    <h2>Admin Login</h2>
+    <!-- Rightt side: Image -->
+  
+<form id="adminLoginForm" action="/admin-login" method="post">
+      <label for="username">Username</label>
+      <input type="text" id="username" name="username" required>
+
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" required>
+
+      <button type="submit" class="login-btn">Login</button>
+
+      <!-- <div class="extra-links">
+        <p><a href="/forgot-password">Forgot Password?</a></p>
+      </div> -->
+
+      <!-- Link to go back to User Login -->
+      <a href="{{ url_for('login') }}" class="back-link">← Back to User Login</a>
+
+      
+    </form>
+  </div>
+<div class="form-image">
+    <img src="{{ url_for('static', filename='images/image9.jpg') }}" alt="Login">
+  </div>
+<script>
+  // Set fixed username and password
+  const ADMIN_USERNAME = "admin";
+  const ADMIN_PASSWORD = "admin123";
+
+  const form = document.getElementById('adminLoginForm');
+  form.addEventListener('submit', function(e) {
+    e.preventDefault(); // Prevent actual form submission
+
+    const enteredUsername = document.getElementById('username').value;
+    const enteredPassword = document.getElementById('password').value;
+
+    if (enteredUsername === ADMIN_USERNAME && enteredPassword === ADMIN_PASSWORD) {
+      alert("Login Successful!");
+      // Redirect to admin dashboard or page
+      window.location.href = "/admin_dashboard";
+    } else {
+      alert("Invalid username or password!");
+    }
+  });
+</script>
+</body>
+</html>

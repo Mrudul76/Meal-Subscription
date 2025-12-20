@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customers</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f7fa;
+      margin: 0;
+      padding: 0;
+      background:linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+url("{{ url_for('static', filename='images/bg3.jpg') }}") no-repeat right center;
+    background-size: cover; 
+    }
+
+    .container {
+      max-width: 1400px;
+        width: 90%;           /* responsive width */
+
+      margin: 40px auto;
+      padding: 20px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        overflow-x: auto;    /* keep horizontal scroll if still needed */
+
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #e58c2d;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+        min-width: 1200px;   /* ensures table stretches horizontally */
+
+      margin-top: 10px;
+    }
+
+    table th, table td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      text-align: left;
+      font-size: 14px;
+    }
+
+    table th {
+      background: teal;
+      color: white;
+      text-transform: uppercase;
+    }
+
+    table tr:nth-child(even) {
+      background: #f9f9f9;
+    }
+
+    table tr:hover {
+      background: #f1f1f1;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 15px;
+      text-decoration: none;
+      color: #333;
+      font-size: 14px;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+
+    .btn-action {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .btn-edit {
+      background: #4CAF50;
+      color: #fff;
+    }
+
+    .btn-delete {
+      background: #f44336;
+      color: #fff;
+    }
+
+    .btn-edit:hover {
+      background: #45a049;
+    }
+
+    .btn-delete:hover {
+      background: #d32f2f;
+    }
+/* ----back button---- */
+        .back-btn {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background-color: #e58c2d;
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 5px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    .back-btn:hover { background-color: #cc7722; }
+
+    .status-active { color: white; background-color: #27ae60; padding: 4px 8px; border-radius: 5px; }
+.status-completed { color: white; background-color: #2980b9; padding: 4px 8px; border-radius: 5px; }
+.status-upcoming { color: white; background-color: #f39c12; padding: 4px 8px; border-radius: 5px; }
+.status-cancelled { color: white; background-color: #c0392b; padding: 4px 8px; border-radius: 5px; }
+
+  </style>
+</head>
+<body>
+<a href="{{ url_for('admin_dashboard') }}" class="back-btn"> ← </a>
+
+  <div class="container">
+    <h2>Customer List</h2>
+    <table>
+      <thead>
+  <tr>
+    <th>Subscription ID</th>
+    <th>Customer Name</th>
+    <th>Plan Type</th>
+    <th>Start Date</th>
+    <th>End Date</th>
+    <th>Meal Type</th>
+    <th>Food Type</th>
+    <th>Amount Paid (₹)</th>
+    <th>Status</th> <!-- Add this -->
+    <th>Subscription Date</th>
+  </tr>
+</thead>
+<tbody>
+  {% for sub in subscriptions %}
+    <tr>
+      <td>{{ sub.subscription_id }}</td>
+      <td>{{ sub.customer_name }}</td>
+      <td>{{ sub.plan_type }}</td>
+      <td>{{ sub.meal_date.strftime('%Y-%m-%d') }}</td>
+      <td>{{ sub.end_date.strftime('%Y-%m-%d') }}</td>
+      <td>{{ sub.meal_type }}</td>
+      <td>{{ sub.food_type }}</td>
+      <td>{{ sub.amount_paid }}</td>
+      <td>
+  <span class="status-{{ sub.status_display|lower }}">{{ sub.status_display|capitalize }}</span>
+      </td>
+      <td>{{ sub.subscription_date }}</td>
+    </tr>
+  {% endfor %}
+</tbody>
+
+
+    </table>
+
+    <!-- <a href="admin-dashboard.html" class="back-link">← Back to Dashboard</a> -->
+  </div>
+</body>
+</html>

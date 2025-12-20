@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - Users</title>
+
+  <style>
+    /* General Body Styling */
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      margin: 0;
+      padding: 20px;
+      background:linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+url("{{ url_for('static', filename='images/bg3.jpg') }}") no-repeat right center;
+    background-size: cover; 
+    }
+
+    h2 {
+      text-align: center;
+      color: orange;
+      margin-bottom: 20px;
+    }
+
+    /* Table Container */
+    .table-container {
+      /* max-width: 1000px; */
+      max-width: 1400px;   /* increased width to cover more page */
+  width: 90%;           /* responsive width */
+      margin: 0 auto;
+      background: #fff;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      overflow-x: auto;
+    }
+
+    /* Users Table Styling */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+        min-width: 1200px;   /* ensures table stretches horizontally */
+
+    }
+
+    thead {
+      background:teal;
+      color: white;
+    }
+
+    th, td {
+      padding: 12px 15px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+    }
+
+    tbody tr:nth-child(even) {
+      background: #f9f9f9;
+    }
+
+    /* Editable Cells */
+    td[contenteditable="true"] {
+      background: #fffbe6;
+      cursor: text;
+    }
+
+    /* Save Button Styling */
+    button.save-btn {
+      padding: 6px 12px;
+      background: #e58c2d;
+      border: none;
+      border-radius: 6px;
+      color: white;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button.save-btn:hover {
+      background: #cc7722;
+    }
+
+    /* Responsive */
+    @media screen and (max-width: 768px) {
+      th, td {
+        padding: 8px;
+      }
+    }
+/* ---back button--- */
+        .back-btn {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background-color: #e58c2d;
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 5px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    .back-btn:hover { background-color: #cc7722; }
+  </style>
+</head>
+<body>
+<a href="{{ url_for('admin_dashboard') }}" class="back-btn"> ← </a>
+
+  <h2>Registered Users</h2>
+
+  <div class="table-container">
+    <table id="userTable">
+      <thead>
+        <tr>
+          <th>User ID</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Address</th>
+          <!-- <th>Password</th>  -->
+          <!-- <th>Actions</th> -->
+        </tr>
+      </thead>
+      <tbody>
+            {% for user in users %}
+      </tbody>
+      <tr>
+      <td>{{ user.id }}</td>
+      <td>{{ user.name }}</td>
+      <td>{{ user.email }}</td>
+      <td>{{ user.phone }}</td>
+      <td>{{ user.address }}</td>
+      <!-- <td>{{ user.password }}</td> -->
+    </tr>
+    {% endfor %}
+    </table>
+  </div>
+
+  <script>
+    // Fetch all users from backend API
+    fetch("http://localhost:5000/api/users")
+      .then(res => res.json())
+      .then(users => {
+        const tbody = document.querySelector("#userTable tbody");
+
+        users.forEach(user => {
+          const tr = document.createElement("tr");
+
+          tr.innerHTML = `
+            <td>${user.id}</td>
+            <td contenteditable="true">${user.name}</td>
+            <td contenteditable="true">${user.email}</td>
+            <td contenteditable="true">${user.phone}</td>
+            <td contenteditable="true">${user.address}</td>
+            <td contenteditable="true">${user.password}</td> 
+            <td>
+              <button class="save-btn" onclick="saveUser(${user.id}, this)">Save</button>
+            </td>
+          `;
+
+          tbody.appendChild(tr);
+        });
+      })
+      .catch(err => console.error("Error fetching users:", err));
+
+    // Save updated user data
+    function saveUser(userId, btn) {
+      const row = btn.closest("tr");
+      const updatedUser = {
+        name: row.children[1].innerText,
+        email: row.children[2].innerText,
+        phone: row.children[3].innerText,
+        address: row.children[4].innerText,
+        password: row.children[5].innerText,
+      };
+
+      fetch(`http://localhost:5000/api/users/${userId}`, {
+        method: "PUT", // backend should handle updating the database
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedUser)
+      })
+      .then(res => {
+        if(res.ok) {
+          alert("User updated successfully!");
+        } else {
+          alert("Failed to update user.");
+        }
+      })
+      .catch(err => console.error(err));
+    }
+  </script>
+
+</body>
+</html>

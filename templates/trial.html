@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trial Plan</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #fdf6e4;
+      margin: 0;
+      padding: 20px;
+      background:linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+url("{{ url_for('static', filename='images/bg2.jpg') }}") no-repeat right center;
+    background-size: cover;
+    }
+
+    .plan-form {
+      max-width: 400px;
+      margin: 30px auto;
+      padding: 20px;
+      background: #ffffff;
+      border: 2px solid #ffb84d;
+      border-radius: 15px;
+      box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .plan-form h2 {
+      text-align: center;
+      color: teal;
+      margin-bottom: 10px;
+    }
+
+    .plan-desc {
+      text-align: center;
+      font-size: 14px;
+      color: #555;
+      margin-bottom: 20px;
+    }
+    
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 10px;
+      color: #444;
+    }
+
+    select, input[type="date"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    #trial-cost {
+      margin-top: 15px;
+      font-weight: bold;
+      color: #d35400;
+      text-align: center;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #e67e22;
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      margin-top: 20px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #cf711f;
+    }
+        .back-btn {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background-color: #e58c2d;
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 5px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    .back-btn:hover { background-color: #cc7722; }
+  </style>
+</head>
+<body>
+<a href="{{ back_url }}" class="back-btn"> ← </a>
+
+<!--  Trial Plan Form -->
+<section class="plan-form">
+  <h2>Trial Plan</h2>
+  <p class="plan-desc">Taste before you subscribe – try our service for 1 day!</p>
+
+<!-- <form id="trialPlanForm" method="POST" action="{{ url_for('subscribe') }}"> -->
+  <form id="trialPlanForm" >
+
+    <!-- Date selection -->
+    <label for="trial-date">Select Trial Date:</label>
+    <input type="date" id="trial-date" name="trial-date" required>
+
+    <!-- Meal Type -->
+    <label for="meal-type">Meal Type:</label>
+    <select id="meal-type" name="meal-type" required>
+      <option value="" disabled selected>-- Select Meal --</option>
+      <option value="lunch">Lunch</option>
+      <option value="dinner">Dinner</option>
+      <option value="both">Lunch + Dinner</option>
+    </select>
+
+    <!-- Food Preference -->
+    <label for="food-type">Food Preference:</label>
+    <select id="food-type" name="food-type" required>
+      <option value="" disabled selected>-- Select Food Type --</option>
+      <option value="veg">Veg (₹50 per meal)</option>
+      <option value="nonveg">Non-Veg (₹70 per meal)</option>
+    </select>
+
+    <!-- Show Cost -->
+    <p id="trial-cost">Total Cost: ₹0</p>
+
+    <!-- Submit -->
+<button type="button" onclick="subscribeTrial()">Subscribe & Pay</button>
+    
+  </form>
+</section>
+<script>
+  // Prevent past dates
+  window.addEventListener("DOMContentLoaded", () => {
+    let today = new Date();
+    let day = String(today.getDate()).padStart(2, "0");
+    let month = String(today.getMonth() + 1).padStart(2, "0");
+    let year = today.getFullYear();
+    let minDate = `${year}-${month}-${day}`;
+    document.getElementById("trial-date").setAttribute("min", minDate);
+  });
+
+  // Function to calculate and display trial cost
+function updateTrialCost() {
+    const trialDate = document.getElementById('trial-date').value;
+    const mealType = document.getElementById('meal-type').value;
+    const foodType = document.getElementById('food-type').value;
+
+    if (!trialDate || !mealType || !foodType) {
+        document.getElementById('trial-cost').innerText = "Total Cost: ₹0";
+        return;
+    }
+
+    const dateObj = new Date(trialDate);
+    const day = dateObj.getDay(); // 0 = Sunday
+    if (foodType === "nonveg" && day !== 0) {
+        document.getElementById('trial-cost').innerText = "❌ Non-Veg meals only available on Sundays";
+        return;
+    }
+
+    const pricePerMeal = (foodType === "veg") ? 50 : 70;
+    const mealCount = (mealType === "both") ? 2 : 1;
+    const totalCost = pricePerMeal * mealCount;
+
+    document.getElementById('trial-cost').innerText = `Total Cost: ₹${totalCost}`;
+    return totalCost;
+}
+
+// Event listeners to update cost whenever user changes inputs
+document.getElementById('trial-date').addEventListener('change', updateTrialCost);
+document.getElementById('meal-type').addEventListener('change', updateTrialCost);
+document.getElementById('food-type').addEventListener('change', updateTrialCost);
+
+// Function to submit trial plan
+function subscribeTrial() {
+    const trialDate = document.getElementById('trial-date').value;
+    const mealType = document.getElementById('meal-type').value;
+    const foodType = document.getElementById('food-type').value;
+
+    if (!trialDate || !mealType || !foodType) {
+        alert("All fields are required!");
+        return;
+    }
+
+    const totalCost = updateTrialCost(); 
+
+    // 🚫 Block non-veg on non-Sunday
+    const dateObj = new Date(trialDate);
+    const day = dateObj.getDay(); // 0 = Sunday
+    if (foodType === "nonveg" && day !== 0) {
+        alert("Non-veg meals are only available on Sundays.");
+        return; // stop execution here
+    }
+
+// Step 1: Check for overlapping active plans via API
+    fetch('/check_overlap', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ start_date: trialDate, end_date: trialDate }) // Trial = single day
+    })
+    .then(res => res.json())
+    .then(data => {
+        if(data.success){
+            // No overlap → redirect to payment
+            const params = new URLSearchParams({
+                plan_type: 'Trial',
+                meal_date: trialDate,
+                meal_type: mealType,
+                food_type: foodType,
+                total_cost: totalCost
+            });
+            window.location.href = '/payment?' + params.toString();
+        } else {
+            // Overlap exists → show message
+            alert(data.error);
+        }
+    })
+    .catch(err => {
+        console.error("Error checking plan overlap:", err);
+        alert("Failed to check plan overlap. Try again.");
+    });
+  }
+
+
+</script>
+
+
+
+
+</body>
+</html>

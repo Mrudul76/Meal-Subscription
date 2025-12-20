@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Subscription History</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      margin: 0;
+      padding: 20px;
+       background:linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+url("{{ url_for('static', filename='images/bg3.jpg') }}") no-repeat right center;
+    background-size: cover; 
+    }
+
+    h2 {
+      text-align: center;
+      color: orange;
+      margin-bottom: 20px;
+    }
+
+    .table-container {
+      max-width: 1400px;
+      width: 90%;
+      margin: 20px auto;
+      background: #fff;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead {
+      background: teal;
+      color: white;
+    }
+
+    th, td {
+      padding: 6px 10px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+    }
+
+    tbody tr:nth-child(even) {
+      background: #f9f9f9;
+    }
+    
+
+    /* Status badges */
+    .status-active { color: white; background-color: #27ae60; padding: 4px 8px; border-radius: 5px; }
+    .status-completed { color: white; background-color: #2980b9; padding: 4px 8px; border-radius: 5px; }
+    .status-cancelled { color: white; background-color: #c0392b; padding: 4px 8px; border-radius: 5px; }
+    .status-paid { color: white; background-color: #f39c12; padding: 4px 8px; border-radius: 5px; }
+    .status-cell {
+    position: relative;
+}
+
+.status-active, .status-upcoming {
+    color: white;
+    background-color: #27ae60;
+    padding: 4px 8px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.status-active:hover::after,
+.status-upcoming:hover::after {
+    content: "Cancel";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #c0392b;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+}
+
+
+    /* Back button */
+    .back-btn {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background-color: #e58c2d;
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 5px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    .back-btn:hover { background-color: #cc7722; }
+
+    @media screen and (max-width: 768px) {
+      th, td { padding: 8px; }
+    }
+    .status-active { color: white; background-color: #27ae60; padding: 4px 8px; border-radius: 5px; }
+.status-completed { color: white; background-color: #2980b9; padding: 4px 8px; border-radius: 5px; }
+.status-upcoming { color: white; background-color: #f39c12; padding: 4px 8px; border-radius: 5px; }
+
+  </style>
+</head>
+<body>
+<a href="{{ url_for('user_dashboard') }}" class="back-btn"> ← </a>
+
+<h2>Subscription History</h2>
+
+<div class="table-container">
+  <table>
+    <thead>
+      <tr>
+        <th>Subscription ID</th>       
+        <th>Plan</th>
+        <th>Start Date</th>
+        <th>End Date</th>
+        <th>Meal Time</th>
+        <th>Food Type</th>
+        <th>Amount Paid</th>
+        <th>Status</th>
+        <th>Subscribed On</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for sub in subscriptions %}
+      <tr>
+        <td>{{ sub.id }}</td>
+        <td>{{ sub.plan_type }}</td>
+        <td>{{ sub.meal_date }}</td>
+        <td>{{ sub.end_date }}</td>
+        <td>
+          {% if sub.meal_type == 'both' %}
+            Lunch & Dinner
+          {% else %}
+            {{ sub.meal_type|capitalize }}
+          {% endif %}
+        </td>
+        <td>{{ sub.food_type|capitalize }}</td>
+        <td>₹{{ sub.amount_paid }}</td>
+<td class="status-cell">
+  {% if sub.status_display in ['active', 'upcoming'] %}
+    <span 
+      class="status-{{ sub.status_display|lower }}" 
+      style="cursor:pointer;"
+      onclick="cancelSubscription('{{ sub.id }}')"
+    >
+      {{ sub.status_display|capitalize }}
+    </span>
+  {% else %}
+    <span class="status-{{ sub.status_display|lower }}">
+      {{ sub.status_display|capitalize }}
+    </span>
+  {% endif %}
+</td>
+
+
+        <td>{{ sub.subscription_date.strftime('%Y-%m-%d %H:%M') }}</td>
+      </tr>
+      {% else %}
+      <tr>
+        <td colspan="8">No subscriptions yet.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+<script>
+function cancelSubscription(subscriptionId) {
+    if(confirm("Are you sure you want to cancel this plan?")) {
+        fetch(`/cancel_subscription/${subscriptionId}`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'}
+        })
+        .then(res => res.json())
+        .then(data => {
+            alert(data.message);
+            if(data.success){
+                location.reload(); // refresh table to show cancelled status
+            }
+        })
+        .catch(err => console.error(err));
+    }
+}
+
+</script>
+
+</body>
+</html>

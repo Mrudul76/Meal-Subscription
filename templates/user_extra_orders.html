@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User - Extra Meal Order</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      margin: 0;
+      padding: 20px;
+       background:linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+url("{{ url_for('static', filename='images/bg3.jpg') }}") no-repeat right center;
+    background-size: cover; 
+    }
+
+    h2 {
+      text-align: center;
+      color: orange;
+      margin-top: 40px;
+      margin-bottom: 20px;
+    }
+
+    .table-container {
+      max-width: 1000px;
+      margin: 20px auto;
+      background: #fff;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead {
+      background: teal;
+      color: white;
+    }
+
+    th, td {
+      padding: 6px 10px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+
+    tbody tr:nth-child(even) {
+      background: #f9f9f9;
+    }
+
+    td[contenteditable="true"] {
+      background: #ffff;
+      cursor: text;
+    }
+
+    @media screen and (max-width: 768px) {
+      th, td {
+        padding: 8px;
+      }
+    }
+
+    /* ----back button---- */
+    .back-btn {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background-color: #e58c2d;
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 5px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    .back-btn:hover { background-color: #cc7722; }
+  </style>
+</head>
+<body>
+  <a href="{{ url_for('user_dashboard') }}" class="back-btn"> ← </a>
+
+  <h2>Your Extra Tiffin Order</h2>
+  <div class="table-container">
+    <table id="extraOrdersTable">
+    
+<thead>
+      <tr>
+        <th>Extra Order ID</th>
+        <th>Date</th>
+        <th>Meal Time</th>
+        <th>Food Type</th>
+        <th>Quantity</th>
+        <th>Total Amount</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for order in extra_orders %}
+      <tr>
+        <td>{{ order.extra_id }}</td>
+        <td>{{ order.extra_date }}</td>
+        <td>{{ order.meal_time|capitalize }}</td>
+        <td>{{ order.meal_type|capitalize }}</td>
+        <td>{{ order.quantity }}</td>
+        <td>₹{{ order.total_amount }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+
+    </table>
+  </div>
+</body>
+</html>

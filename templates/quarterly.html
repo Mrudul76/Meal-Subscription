@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quarterly Tiffin Plan</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #fdf6e4; /* light orange background */
+      margin: 0;
+      padding: 20px;
+       background:linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+url("{{ url_for('static', filename='images/bg2.jpg') }}") no-repeat right center;
+    background-size: cover;
+    }
+
+    .plan-container {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #ffffff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+       border: 2px solid #ffb84d;
+    }
+
+    .plan-container h2 {
+      text-align: center;
+      color: teal;
+    }
+
+    .description p {
+      margin: 10px 0;
+      line-height: 1.5;
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+      font-size: 16px;
+    }
+
+    .summary {
+       margin-top: 20px;
+      padding: 10px;
+      border: 1px solid o#e58c2d;
+      background: #fff7ec;
+      border-radius: 5px;
+    }
+
+    button {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      margin-top: 20px;
+      background-color: #fb8c00;
+      color: white;
+      font-size: 18px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background-color: #ef6c00;
+    }
+    .back-btn {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background-color: #e58c2d;
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 5px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    .back-btn:hover { background-color: #cc7722; }
+  </style>
+</head>
+<body>
+
+<a href="{{ back_url }}"  class="back-btn"> ← </a>
+
+<div class="plan-container">
+  <h2>Quarterly Tiffin Plan</h2>
+
+  <div class="description">
+    <p>Enjoy freshly prepared meals delivered to you for <strong>90 days</strong>.</p>
+    <p>Choose between <strong>Lunch</strong>, <strong>Dinner</strong>, or <strong>Both</strong> as per your preference.</p>
+    <p>Vegetarian meals are priced at <strong>₹50 per meal</strong>.</p>
+    <p>Non-Veg meals are available only on <strong>Sundays</strong> for both lunch and dinner at <strong>₹70 per meal</strong>.</p>
+    <p>Select your start date and let us take care of the rest!</p>
+  </div>
+
+  <!-- Start Date Selection -->
+  <label for="start-date">Select Start Date:</label>
+  <input type="date" id="start-date">
+
+  <!-- Meal Time Selection -->
+  <label for="meal-time">Choose Meal Time:</label>
+  <select id="meal-time">
+      <option value="" disabled selected>-- Select Meal --</option>
+
+    <option value="lunch">Lunch Only</option>
+    <option value="dinner">Dinner Only</option>
+    <option value="both">Lunch & Dinner</option>
+  </select>
+
+  <!-- Veg / Non-Veg Selection -->
+  <label for="meal-type">Choose Meal Type:</label>
+  <select id="meal-type">
+          <option value="" disabled selected>-- Select Veg/Non-veg --</option>
+
+    <option value="veg">Veg (₹50 per meal)</option>
+    <option value="nonveg">Non-Veg (₹70 per meal, Sundays only)</option>
+  </select>
+
+  <!-- Summary Section -->
+  <div class="summary" id="summary">
+    <p><strong>Plan Duration:</strong> 90 Days</p>
+    <p><strong>Total Meals:</strong> - </p>
+    <p><strong>Total Cost:</strong> - </p>
+  </div>
+
+  <!-- Pay Now -->
+  <button onclick="calculatePlan(true)">Subscribe & Pay</button>
+</div>
+
+<script>
+// Prevent users from selecting past dates
+window.addEventListener('DOMContentLoaded', (event) => {
+    const today = new Date();
+    const day = String(today.getDate()).padStart(2, "0");
+    const month = String(today.getMonth() + 1).padStart(2, "0");
+    const year = today.getFullYear();
+    const minDate = `${year}-${month}-${day}`;
+    const startDateInput = document.getElementById("start-date");
+    startDateInput.setAttribute("min", minDate);
+
+// Add live summary update when inputs change
+    const mealTimeSelect = document.getElementById("meal-time");
+    const mealTypeSelect = document.getElementById("meal-type");
+
+    [startDateInput, mealTimeSelect, mealTypeSelect].forEach(el => {
+        el.addEventListener('change', () => calculatePlan(false));
+    });
+});
+
+function calculateQuarterlyCost(startDate, mealTime, foodType) {
+    const start = new Date(startDate);
+    let totalCost = 0;
+    let mealCount = 0;
+
+    for (let i = 0; i < 90; i++) {  // 30 days
+        const currentDay = new Date(start);
+        currentDay.setDate(start.getDate() + i);
+        const isSunday = currentDay.getDay() === 0; // Sunday = 0
+         // Lunch
+        if (mealTime === "lunch" || mealTime === "both") {
+            mealCount++;
+            if (foodType === "veg") {
+                totalCost += 50;
+            } else if (foodType === "nonveg") {
+                totalCost += isSunday ? 70 : 50; // non-veg only on Sundays
+            }
+        }
+
+        // Dinner
+        if (mealTime === "dinner" || mealTime === "both") {
+            mealCount++;
+            if (foodType === "veg") {
+                totalCost += 50;
+            } else if (foodType === "nonveg") {
+                totalCost += isSunday ? 70 : 50;
+            }
+        }
+    }
+
+    return { totalCost, mealCount };
+}
+  function calculatePlan(submit = false) {
+    const startDate = document.getElementById('start-date').value;
+    const mealTime = document.getElementById('meal-time').value;
+    const foodType = document.getElementById('meal-type').value;
+
+    if(!startDate || !mealTime || !foodType){
+        document.getElementById("summary").innerHTML = "<p>Please fill all fields.</p>";
+        return;
+    }
+// Use new monthly calculation
+    const { totalCost, mealCount } = calculateQuarterlyCost(startDate, mealTime, foodType);
+    
+// Calculate end date
+    const startDateObj = new Date(startDate);
+    const endDateObj = new Date(startDateObj);
+    endDateObj.setDate(endDateObj.getDate() + 89); // 30-day plan
+    const endDate = endDateObj.toISOString().split("T")[0];
+
+    //Update summary
+    document.getElementById('summary').innerHTML = `
+      <p><strong>Plan Duration:</strong> 30 Days</p>
+      <p><strong>Total Meals:</strong> ${mealCount}</p>
+      <p><strong>Total Cost:</strong> ₹${totalCost}</p>
+      <p><strong>Start Date:</strong> ${startDate}</p>
+        <p><strong>End Date:</strong> ${endDate}</p>
+    `;
+
+    // Redirect to payment page if user clicked Subscribe & Pay
+    if(submit){
+        // Check overlapping active plans before redirecting
+        fetch('/check_overlap', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ start_date: startDate, end_date: endDate })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.success){
+                const params = new URLSearchParams({
+                    plan_type: 'Quarterly',
+                    meal_date: startDate,
+                    end_date: endDate,
+                    meal_type: mealTime,
+                    food_type: foodType,
+                    total_cost: totalCost
+                });
+                window.location.href = '/payment?' + params.toString();
+            } else {
+                alert(data.error);
+            }
+        })
+        .catch(err => {
+            console.error("Error checking plan overlap:", err);
+            alert("Failed to check plan overlap. Try again.");
+        });
+    }
+  }
+</script>
+
+
+</body>
+</html>
+
+
+ 
