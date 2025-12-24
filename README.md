@@ -6,9 +6,9 @@ The project focuses on clarity, usability, and smooth user flow.
 
 **Tech Stack**
 
-Frontend: HTML, CSS 
-Backend: Python (Flask) 
-Database: MySQL
+-Frontend: HTML, CSS
+-Backend: Python (Flask)
+-Database: MySQL
 
 **Key Features**
 -User registration and login
@@ -23,5 +23,5 @@ Database: MySQL
 This project is developed as an academic and learning project to demonstrate understanding of web application flow, form validation, and user-focused design.
 
 **Author**
-Mrudul J.Kuchankar 
-MCA candidate
+Mrudul J.Kuchankar
+-MCA candidate
