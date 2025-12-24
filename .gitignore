@@ -3,3 +3,13 @@ venv/
 __pycache__/
 *.pyc
 instance/
+app.py
+db_connection.py
+docker-compose.yml
+Dockerfile
+usecase.drawio
+erd.drawio
+erd1.jpg
+2401105.docx
+2401105.pdf
+
